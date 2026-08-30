@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VisionWatch X1 - 3D Customizer | VisionVerse</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/shop.css">
+  <link rel="stylesheet" href="css/product.css">
+  
+  <!-- Three.js CDN & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo-icon">⬡</div>
+        <span>VISIONVERSE <span class="text-cyan">3D</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="shop.html?category=Accessories">Accessories</a></li>
+        <li><a href="shop.html?category=Wearables">Wearables</a></li>
+        <li><a href="index.html#showcase">3D World</a></li>
+        <li><a href="index.html#exhibition">Exhibition</a></li>
+        <li>
+          <a href="#" class="wishlist-nav-trigger">
+            <span class="nav-wishlist-text">Wishlist</span>
+            <span class="wishlist-count-badge count-bubble" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-right-actions">
+        <div class="demo-mode-badge">
+          <span class="demo-pulse"></span>
+          <span>DEMO MODE</span>
+        </div>
+
+        <a href="cart.html" class="nav-action-pill" id="nav-cart-btn">
+          <span>🛒</span>
+          <span class="nav-cart-text">Cart</span>
+          <span class="cart-count-badge count-bubble" style="display:none;">0</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Product Detail & 3D Studio Main -->
+  <main class="container">
+    <!-- Breadcrumbs -->
+    <nav class="product-breadcrumbs">
+      <a href="index.html">Home</a>
+      <span>/</span>
+      <a href="shop.html">Shop</a>
+      <span>/</span>
+      <a href="#" id="p-breadcrumb-cat">Wearables</a>
+      <span>/</span>
+      <span id="p-breadcrumb-title" class="text-white">VisionWatch X1</span>
+    </nav>
+
+    <!-- Product Studio 2-Column Grid -->
+    <div class="product-studio-grid">
+      <!-- Left Column: 3D Viewport & Studio Toolbar -->
+      <div class="product-viewport-wrap">
+        <!-- 3D Canvas Box -->
+        <div class="product-3d-canvas-box" id="product-3d-viewport">
+          <!-- 3D Controls Toolbar Overlay -->
+          <div class="viewport-toolbar">
+            <button class="viewport-tool-btn active" id="btn-3d-autorotate" title="Toggle Auto-Rotate">↻</button>
+            <button class="viewport-tool-btn" id="btn-3d-reset" title="Reset View">⊙</button>
+            <button class="viewport-tool-btn" id="btn-3d-wireframe" title="Toggle Wireframe Mode">⬡</button>
+            <button class="viewport-tool-btn" id="btn-3d-explode" title="Toggle 3D Explode / Deconstruct View">💥</button>
+            <button class="viewport-tool-btn" id="btn-3d-fullscreen" title="Fullscreen View">⛶</button>
+          </div>
+
+          <!-- Studio Environment & Camera Preset Toolbar at Bottom -->
+          <div class="viewport-studio-controls">
+            <!-- Studio Lighting Modes -->
+            <div class="light-env-selector">
+              <span class="studio-ctl-title">💡 Studio Light:</span>
+              <button class="light-env-chip active" data-env="cyber_neon">Cyber Neon</button>
+              <button class="light-env-chip" data-env="studio_white">Clean Studio</button>
+              <button class="light-env-chip" data-env="sunset_amber">Sunset Amber</button>
+              <button class="light-env-chip" data-env="matrix_emerald">Matrix Glow</button>
+            </div>
+
+            <!-- Camera Angles -->
+            <div class="cam-preset-selector">
+              <span class="studio-ctl-title">🎥 Angle:</span>
+              <button class="cam-preset-btn" data-angle="front">Front</button>
+              <button class="cam-preset-btn" data-angle="top">Top</button>
+              <button class="cam-preset-btn" data-angle="isometric">3D Iso</button>
+              <button class="cam-preset-btn" data-angle="close">Close-Up</button>
+            </div>
+          </div>
+
+          <!-- Interaction Hint -->
+          <div class="viewport-hint-badge">
+            <span>🖱 Drag to Rotate · Scroll to Zoom · Click Hotspots · 💥 Explode View</span>
+          </div>
+
+          <!-- Hotspots DOM Projection Layer -->
+          <div class="hotspot-layer"></div>
+        </div>
+
+        <!-- Hotspots Interactive Feature Guide List -->
+        <div class="hotspots-guide-box glass-panel">
+          <h4>
+            <span class="text-cyan">✦</span> Interactive Hardware Hotspots
+          </h4>
+          <div class="hotspots-guide-list" id="hotspots-guide-list">
+            <!-- Populated via product.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Product Info & Live Customizer -->
+      <div class="product-details-wrap">
+        <!-- Header Info -->
+        <div class="p-header-top">
+          <div>
+            <span class="badge-featured" id="p-badge">Bestseller</span>
+          </div>
+          <h1 class="p-main-title" id="p-title">VisionWatch X1</h1>
+          <div class="p-rating-reviews">
+            <span class="star-icon">★★★★★</span>
+            <span class="font-semibold text-white" id="p-rating">4.8</span>
+            <span class="text-muted" id="p-reviews">(342 verified reviews)</span>
+          </div>
+        </div>
+
+        <!-- Price Area -->
+        <div class="p-price-area">
+          <div class="p-dynamic-price" id="p-dynamic-price">₹4,999</div>
+          <div class="p-old-price" id="p-old-price">₹7,999</div>
+          <span class="badge-discount" id="p-discount">38% OFF</span>
+        </div>
+
+        <!-- Short Description -->
+        <p class="p-desc-text" id="p-description">
+          The VisionWatch X1 redefines wearable intelligence. Featuring an aerospace-grade frame and micro-curved sapphire AMOLED screen.
+        </p>
+
+        <!-- Live 3D Customizer Studio -->
+        <div class="customizer-box glass-panel" id="customizer-section">
+          <h3>
+            <span>🎨</span> Product 3D Customizer
+          </h3>
+
+          <!-- Color Customization -->
+          <div class="custom-control-group">
+            <div class="custom-label">
+              <span>Select Color</span>
+              <span class="custom-active-val" id="selected-color-label">Cyber Purple</span>
+            </div>
+            <div class="color-swatches-row" id="customizer-colors">
+              <!-- Swatches generated dynamically -->
+            </div>
+          </div>
+
+          <!-- Material Customization -->
+          <div class="custom-control-group">
+            <div class="custom-label">
+              <span>Select Material Finish</span>
+            </div>
+            <div class="materials-grid" id="customizer-materials">
+              <!-- Materials generated dynamically -->
+            </div>
+          </div>
+
+          <!-- Size Customization -->
+          <div class="custom-control-group">
+            <div class="custom-label">
+              <span>Case / Configuration Size</span>
+            </div>
+            <div class="sizes-row" id="customizer-sizes">
+              <!-- Sizes generated dynamically -->
+            </div>
+          </div>
+
+          <!-- Real-Time Pricing Breakdown Box -->
+          <div class="pricing-breakdown-box">
+            <div class="breakdown-row">
+              <span>Base Hardware:</span>
+              <span id="breakdown-base">₹4,999</span>
+            </div>
+            <div class="breakdown-row">
+              <span>Material Premium:</span>
+              <span id="breakdown-material">Included</span>
+            </div>
+            <div class="breakdown-row">
+              <span>Size Upgrade:</span>
+              <span id="breakdown-size">Included</span>
+            </div>
+            <div class="breakdown-row breakdown-total-row">
+              <span>Customized Unit Price:</span>
+              <span id="breakdown-total">₹4,999</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quantity & Purchase Actions -->
+        <div class="purchase-actions-area">
+          <div class="qty-and-ar-row">
+            <!-- Quantity Stepper -->
+            <div class="qty-stepper">
+              <button class="qty-btn" id="qty-minus-btn" aria-label="Decrease quantity">&minus;</button>
+              <span class="qty-val" id="qty-input-display">1</span>
+              <button class="qty-btn" id="qty-plus-btn" aria-label="Increase quantity">&plus;</button>
+            </div>
+
+            <!-- AR Mode Button -->
+            <button class="btn btn-outline flex-1" id="btn-view-ar">
+              <span>🥽 View in AR</span>
+            </button>
+          </div>
+
+          <!-- Primary CTA Buttons -->
+          <div class="primary-cta-row">
+            <button class="btn btn-primary btn-lg flex-1" id="btn-add-custom-cart">
+              <span>🛒 Add Customized to Cart</span>
+            </button>
+            <button class="btn btn-outline btn-lg" id="btn-buy-now">
+              <span>Buy Now ⚡</span>
+            </button>
+          </div>
+
+          <!-- Wishlist Toggle -->
+          <button class="btn btn-glass" id="p-wishlist-toggle" style="width: 100%;">
+            ♡ Add to Wishlist
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Details Tabs -->
+    <section class="product-tabs-section glass-panel" style="padding: 32px;">
+      <div class="tabs-nav-bar">
+        <button class="product-tab-btn active" data-tab="specs">Technical Specifications</button>
+        <button class="product-tab-btn" data-tab="box">What's In The Box</button>
+        <button class="product-tab-btn" data-tab="shipping">Express Delivery & Warranty</button>
+      </div>
+
+      <!-- Specs Tab -->
+      <div class="product-tab-panel active" id="tab-panel-specs">
+        <div class="specs-keyval-grid" id="p-specs-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Box Tab -->
+      <div class="product-tab-panel" id="tab-panel-box">
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 0.95rem; color: var(--text-secondary);">
+          <li>✓ 1x VisionVerse Spatial Hardware Unit</li>
+          <li>✓ 1x Magnetic Fast-Charge Braided Cable</li>
+          <li>✓ 1x Quick-Start AR Pairing Guide</li>
+          <li>✓ 1x Certificate of Authenticity & 2-Year Spatial Care Warranty</li>
+        </ul>
+      </div>
+
+      <!-- Shipping Tab -->
+      <div class="product-tab-panel" id="tab-panel-shipping">
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          🚚 <strong>Express Spatial Shipping:</strong> All orders qualify for free delivery over ₹5,000. Typical dispatch within 24 hours with real-time biometric GPS telemetry tracking. Comes with a 30-day money-back guarantee and 2 years of global manufacturer warranty coverage.
+        </p>
+      </div>
+    </section>
+
+    <!-- Recommendations: You May Also Like -->
+    <section class="recommendations-section">
+      <div class="section-header" style="text-align: left; margin-bottom: 24px;">
+        <h3>You May Also Like</h3>
+        <p>Similar products engineered for your connected spatial ecosystem.</p>
+      </div>
+      <div class="products-grid" id="related-products-grid">
+        <!-- Rendered via product.js -->
+      </div>
+    </section>
+
+    <!-- Recently Viewed -->
+    <section class="recommendations-section" id="recently-viewed-section">
+      <div class="section-header" style="text-align: left; margin-bottom: 16px;">
+        <h4>Recently Viewed</h4>
+      </div>
+      <div class="recent-items-grid" id="recently-viewed-grid">
+        <!-- Rendered via product.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 VisionVerse 3D Commerce. "Shop Beyond the Screen."</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/three-viewer.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/product.js"></script>
+  <script src="js/ai-guide.js"></script>
+</body>
+</html>

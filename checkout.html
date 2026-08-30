@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Express Checkout | VisionVerse 3D Commerce</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/checkout.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo-icon">⬡</div>
+        <span>VISIONVERSE <span class="text-cyan">3D</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="shop.html?category=Wearables">Categories</a></li>
+        <li><a href="index.html#showcase">3D World</a></li>
+        <li><a href="index.html#exhibition">Exhibition</a></li>
+        <li>
+          <a href="#" class="wishlist-nav-trigger">
+            <span class="nav-wishlist-text">Wishlist</span>
+            <span class="wishlist-count-badge count-bubble" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-right-actions">
+        <div class="demo-mode-badge">
+          <span class="demo-pulse"></span>
+          <span>DEMO MODE</span>
+        </div>
+
+        <a href="cart.html" class="nav-action-pill" id="nav-cart-btn">
+          <span>🛒</span>
+          <span class="nav-cart-text">Cart</span>
+          <span class="cart-count-badge count-bubble" style="display:none;">0</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Checkout Main Content -->
+  <main class="container">
+    <div class="checkout-hero-header">
+      <span class="badge-tag">✦ Secure Spatial Checkout</span>
+      <h1>Finalize <span class="text-gradient">Your Order</span></h1>
+    </div>
+
+    <!-- Steps Progress Indicator -->
+    <div class="checkout-steps-bar">
+      <div class="step-node active">
+        <div class="step-circle">1</div>
+        <span>Shipping Details</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-node active">
+        <div class="step-circle">2</div>
+        <span>Payment Method</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-node">
+        <div class="step-circle">3</div>
+        <span>Order Confirmation</span>
+      </div>
+    </div>
+
+    <!-- Checkout Main 2-Column Grid -->
+    <div class="checkout-main-grid" id="checkout-main-grid">
+      <!-- Left: Checkout Forms -->
+      <form class="checkout-forms-wrap" id="checkout-form">
+        <!-- 1. Customer Information -->
+        <div class="checkout-section-card glass-panel">
+          <h3><span>👤</span> Customer Information</h3>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="cust-name">Full Name *</label>
+              <input type="text" class="form-input" id="cust-name" required placeholder="Dr. Vikram Sarabhai" value="Alex Rivera">
+            </div>
+            <div class="form-group">
+              <label for="cust-email">Email Address *</label>
+              <input type="email" class="form-input" id="cust-email" required placeholder="alex@visionverse.io" value="alex.rivera@visionverse.io">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cust-phone">Phone Number *</label>
+            <input type="tel" class="form-input" id="cust-phone" required placeholder="+91 98765 43210" value="+91 98765 43210">
+          </div>
+        </div>
+
+        <!-- 2. Shipping Address -->
+        <div class="checkout-section-card glass-panel">
+          <h3><span>📍</span> Delivery Address</h3>
+          <div class="form-group">
+            <label for="cust-address">Street Address / Landmark *</label>
+            <input type="text" class="form-input" id="cust-address" required placeholder="Flat 402, Cyber Tower B, Outer Ring Road" value="402 Quantum Heights, Electronic City Phase 1">
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="cust-city">City *</label>
+              <input type="text" class="form-input" id="cust-city" required placeholder="Bengaluru" value="Bengaluru">
+            </div>
+            <div class="form-group">
+              <label for="cust-pin">PIN Code *</label>
+              <input type="text" class="form-input" id="cust-pin" required placeholder="560100" value="560100">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Payment Method (Demo Only) -->
+        <div class="checkout-section-card glass-panel">
+          <h3><span>💳</span> Payment Method (Demo Mode)</h3>
+          
+          <div class="payment-methods-selector">
+            <div class="payment-method-card active" data-payment="upi">
+              <span class="pay-icon">📱</span>
+              <span class="pay-name">Instant UPI</span>
+              <span class="pay-sub">GPay / PhonePe / Paytm</span>
+            </div>
+            <div class="payment-method-card" data-payment="card">
+              <span class="pay-icon">💳</span>
+              <span class="pay-name">Card</span>
+              <span class="pay-sub">Credit / Debit</span>
+            </div>
+            <div class="payment-method-card" data-payment="cod">
+              <span class="pay-icon">💵</span>
+              <span class="pay-name">COD</span>
+              <span class="pay-sub">Pay on Delivery</span>
+            </div>
+          </div>
+
+          <!-- Section: UPI -->
+          <div id="payment-section-upi" class="payment-sub-section">
+            <div class="upi-box">
+              <div class="upi-qr-wrap">
+                <!-- SVG Demo QR Code -->
+                <svg viewBox="0 0 120 120" width="100%" height="100%">
+                  <rect width="120" height="120" fill="#ffffff" />
+                  <rect x="10" y="10" width="30" height="30" fill="#050714" />
+                  <rect x="15" y="15" width="20" height="20" fill="#ffffff" />
+                  <rect x="19" y="19" width="12" height="12" fill="#050714" />
+                  <rect x="80" y="10" width="30" height="30" fill="#050714" />
+                  <rect x="85" y="15" width="20" height="20" fill="#ffffff" />
+                  <rect x="89" y="19" width="12" height="12" fill="#050714" />
+                  <rect x="10" y="80" width="30" height="30" fill="#050714" />
+                  <rect x="15" y="85" width="20" height="20" fill="#ffffff" />
+                  <rect x="19" y="89" width="12" height="12" fill="#050714" />
+                  <!-- Bits -->
+                  <circle cx="60" cy="30" r="4" fill="#050714"/>
+                  <circle cx="60" cy="60" r="6" fill="#00f0ff"/>
+                  <circle cx="30" cy="60" r="4" fill="#050714"/>
+                  <circle cx="90" cy="60" r="4" fill="#050714"/>
+                  <circle cx="60" cy="90" r="4" fill="#050714"/>
+                  <circle cx="90" cy="90" r="6" fill="#050714"/>
+                </svg>
+              </div>
+              <div class="upi-info">
+                <h5>Scan & Pay via any UPI App</h5>
+                <p>Google Pay, PhonePe, Paytm, CRED, or BHIM</p>
+                <span class="upi-id-badge">visionverse@demo.upi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Card -->
+          <div id="payment-section-card" class="payment-sub-section" style="display:none;">
+            <!-- Live Interactive Card Preview -->
+            <div class="card-live-preview">
+              <div class="card-chip"></div>
+              <div class="card-num-preview" id="card-preview-number">•••• •••• •••• ••••</div>
+              <div class="card-footer-preview">
+                <div>
+                  <span style="font-size:0.65rem; display:block;">CARD HOLDER</span>
+                  <span class="card-holder-preview" id="card-preview-name">ALEX RIVERA</span>
+                </div>
+                <div>
+                  <span style="font-size:0.65rem; display:block;">EXPIRES</span>
+                  <span class="card-exp-preview" id="card-preview-exp">12/28</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="card-number-input">Card Number</label>
+              <input type="text" class="form-input" id="card-number-input" placeholder="4532 8901 2345 6789" maxlength="19">
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="card-name-input">Cardholder Name</label>
+                <input type="text" class="form-input" id="card-name-input" placeholder="ALEX RIVERA">
+              </div>
+              <div class="form-group">
+                <label for="card-exp-input">Expiry Date (MM/YY)</label>
+                <input type="text" class="form-input" id="card-exp-input" placeholder="12/28" maxlength="5">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: COD -->
+          <div id="payment-section-cod" class="payment-sub-section" style="display:none;">
+            <p style="font-size:0.9rem; color:var(--text-secondary); padding:16px; background:rgba(0,0,0,0.3); border-radius:var(--radius-md);">
+              💵 <strong>Cash on Delivery:</strong> Pay in cash or via digital UPI QR upon delivery to your doorstep. No prepayment required.
+            </p>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 10px;">
+          <span>Place Order (<span id="btn-place-order-amount">₹0</span>)</span>
+          <span class="btn-icon">✓</span>
+        </button>
+      </form>
+
+      <!-- Right: Sticky Order Summary Box -->
+      <aside class="checkout-summary-card glass-panel">
+        <h3>Order Items</h3>
+
+        <div class="checkout-items-list" id="checkout-items-list">
+          <!-- Populated dynamically via checkout.js -->
+        </div>
+
+        <div class="summary-rows-list">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="checkout-subtotal">₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Express Spatial Delivery:</span>
+            <span id="checkout-shipping">FREE</span>
+          </div>
+          <div class="summary-total-row">
+            <span>Final Total:</span>
+            <span id="checkout-total">₹0</span>
+          </div>
+        </div>
+
+        <p class="text-muted" style="font-size:0.75rem; text-align:center; margin-top:16px;">
+          🔒 256-Bit SSL Demo Mode Encryption · Instant Order Confirmation
+        </p>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 VisionVerse 3D Commerce. "Shop Beyond the Screen."</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/ai-guide.js"></script>
+</body>
+</html>

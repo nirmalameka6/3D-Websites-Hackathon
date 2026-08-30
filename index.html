@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VisionVerse 3D Commerce | Shop Beyond the Screen</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/shop.css">
+  
+  <!-- Three.js CDN & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo-icon">⬡</div>
+        <span>VISIONVERSE <span class="text-cyan">3D</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="shop.html?category=Wearables">Categories</a></li>
+        <li><a href="#showcase">3D World</a></li>
+        <li><a href="#exhibition">Exhibition</a></li>
+        <li>
+          <a href="#" class="wishlist-nav-trigger">
+            <span class="nav-wishlist-text">Wishlist</span>
+            <span class="wishlist-count-badge count-bubble" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-right-actions">
+        <div class="demo-mode-badge" title="Running in self-contained offline demo mode">
+          <span class="demo-pulse"></span>
+          <span>DEMO MODE</span>
+        </div>
+
+        <a href="cart.html" class="nav-action-pill" id="nav-cart-btn">
+          <span>🛒</span>
+          <span class="nav-cart-text">Cart</span>
+          <span class="cart-count-badge count-bubble" style="display:none;">0</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section with Animated 3D Background -->
+  <section class="hero-section">
+    <div id="hero-3d-bg" class="hero-3d-bg-canvas"></div>
+    
+    <div class="container hero-content">
+      <span class="badge-tag">✦ Spatial Web Commerce</span>
+      <h1 class="hero-heading">
+        Shop Beyond <br>
+        <span class="text-gradient">the Screen.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Discover next-generation hardware in real-time 3D. Inspect interactive hotspots, 
+        customize materials live, and project hyper-realistic products into your space.
+      </p>
+
+      <div class="hero-cta-row">
+        <a href="shop.html" class="btn btn-primary btn-lg">
+          <span>Explore Products</span>
+          <span class="btn-icon">→</span>
+        </a>
+        <a href="#showcase" class="btn btn-outline btn-lg">
+          <span>Enter 3D World</span>
+          <span class="btn-icon">⬡</span>
+        </a>
+        <button class="btn btn-glass btn-lg" onclick="window.dispatchEvent(new CustomEvent('visionverse-open-ai', { detail: { query: 'What is VisionVerse?' } }))">
+          <span>Ask AI Guide</span>
+          <span class="btn-icon">🤖</span>
+        </button>
+      </div>
+
+      <div class="hero-stats-row">
+        <div class="stat-item">
+          <h3>20+</h3>
+          <p>Procedural 3D Models</p>
+        </div>
+        <div class="stat-item">
+          <h3>From ₹19</h3>
+          <p>Micro-Tech to Hyper-EVs</p>
+        </div>
+        <div class="stat-item">
+          <h3>100%</h3>
+          <p>Real-Time WebGL</p>
+        </div>
+        <div class="stat-item">
+          <h3>WebXR</h3>
+          <p>Augmented Reality</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ultra-Affordable Micro-Tech Section (Starting from ₹19) -->
+  <section class="section-wrapper" id="micro-tech">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-tag">⚡ Ultra-Affordable Cyber Tech</span>
+        <h2>Micro-Tech from ₹19 to ₹999</h2>
+        <p>Holographic NFC tags, glowing warp cables, luminous beacons, and gaming controllers with full 3D interactive viewports.</p>
+      </div>
+
+      <div class="products-grid" id="budget-products-grid">
+        <!-- Rendered via JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="section-wrapper" id="featured">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-tag">✦ Handpicked Flagships</span>
+        <h2>Flagship Hardware</h2>
+        <p>Experience our flagship wearables, cyber vehicles, computing workstations, and drones in full 3D.</p>
+      </div>
+
+      <div class="products-grid" id="featured-products-grid">
+        <!-- Rendered via JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 3D Interactive Product Showcase Section -->
+  <section class="section-wrapper" id="showcase">
+    <div class="container">
+      <div class="showcase-3d-box glass-panel">
+        <div class="showcase-viewport-canvas" id="homepage-showcase-canvas">
+          <div class="viewport-hint-badge">
+            <span>🖱 Drag to Rotate · Scroll to Zoom</span>
+          </div>
+        </div>
+
+        <div class="showcase-info">
+          <span class="badge-tag" id="showcase-badge">Flagship 3D Showcase</span>
+          <h3 id="showcase-title">VisionCar One</h3>
+          <p class="text-muted" id="showcase-subtitle">Autonomous electric cyber-coupe with Level 4 neural AI.</p>
+          
+          <div class="showcase-features-list">
+            <div class="showcase-feat-item">
+              <span class="icon">⬡</span>
+              <div>
+                <strong>360° Real-Time Orbital Inspection</strong>
+                <p class="text-muted">High-precision procedural geometry with physical lighting maps.</p>
+              </div>
+            </div>
+            <div class="showcase-feat-item">
+              <span class="icon">⚡</span>
+              <div>
+                <strong>Interactive Hardware Hotspots</strong>
+                <p class="text-muted">Clickable components reveal internal telemetry & engineering specs.</p>
+              </div>
+            </div>
+            <div class="showcase-feat-item">
+              <span class="icon">🎨</span>
+              <div>
+                <strong>Live Materials Customization</strong>
+                <p class="text-muted">Switch seamlessly between titanium, carbon fiber, and glass.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-cta-row">
+            <a href="product.html?id=visioncar-one" id="showcase-detail-btn" class="btn btn-primary">
+              <span>Full 3D Customizer Studio →</span>
+            </a>
+            <button class="btn btn-outline" id="showcase-switch-model-btn">
+              <span>Next 3D Model ↻</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trending Products & New Arrivals -->
+  <section class="section-wrapper">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-tag">✦ Trending Now</span>
+        <h2>Top Rated & New Arrivals</h2>
+        <p>Discover products loved by creators, engineers, and visionaries.</p>
+      </div>
+
+      <div class="products-grid" id="trending-products-grid">
+        <!-- Rendered via JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 3D Virtual Exhibition Gallery -->
+  <section class="exhibition-wrapper" id="exhibition">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge-tag">✦ Immersive Experience</span>
+        <h2>3D Virtual Exhibition</h2>
+        <p>Walk through our virtual gallery. Select any illuminated pedestal to inspect flagship hardware.</p>
+      </div>
+
+      <div class="exhibition-canvas-container" id="exhibition-3d-canvas">
+        <!-- 3D Virtual Gallery Rendered Here -->
+      </div>
+
+      <div class="exhibition-nav-bar" id="exhibition-nav-chips">
+        <button class="exhibit-nav-chip active" data-index="0">1. VisionWatch X1</button>
+        <button class="exhibit-nav-chip" data-index="1">2. VisionCar One</button>
+        <button class="exhibit-nav-chip" data-index="2">3. VisionLaptop Pro</button>
+        <button class="exhibit-nav-chip" data-index="3">4. Future Drone</button>
+        <button class="exhibit-nav-chip" data-index="4">5. Smart Speaker</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Traditional Website → 3D Converter Section -->
+  <section class="section-wrapper" id="converter">
+    <div class="container">
+      <div class="converter-box glass-panel">
+        <div class="section-header">
+          <span class="badge-tag">✦ Spatial Synthesis Engine</span>
+          <h2>Traditional Website → 3D World</h2>
+          <p>Transform standard flat 2D product catalogs into interactive WebGL experiences in seconds.</p>
+        </div>
+
+        <form class="converter-input-row" id="converter-demo-form">
+          <input type="text" class="converter-input" id="converter-text-input" 
+                 placeholder="Enter product description... e.g., 'Ergonomic spatial titanium audio headset'" 
+                 value="Next-Gen Autonomous Neural Drone with 4K Gimbal">
+          <button type="submit" class="btn btn-primary" id="btn-transform-3d">
+            <span>Transform into 3D</span>
+            <span class="btn-icon">⚡</span>
+          </button>
+        </form>
+
+        <div class="pipeline-steps-grid">
+          <div class="pipeline-step-card active" id="step-1">
+            <span class="step-num">01 // PARSE</span>
+            <h4 class="step-title">Semantic Extraction</h4>
+            <p class="text-muted" style="font-size:0.75rem; margin-top:4px;">Deconstructing 2D metadata & spec sheets</p>
+          </div>
+          <div class="pipeline-step-card" id="step-2">
+            <span class="step-num">02 // SYNTHESIS</span>
+            <h4 class="step-title">3D Geometry Gen</h4>
+            <p class="text-muted" style="font-size:0.75rem; margin-top:4px;">Constructing volumetric meshes & vertices</p>
+          </div>
+          <div class="pipeline-step-card" id="step-3">
+            <span class="step-num">03 // SHADERS</span>
+            <h4 class="step-title">PBR Material Baking</h4>
+            <p class="text-muted" style="font-size:0.75rem; margin-top:4px;">Applying roughness, metalness & lights</p>
+          </div>
+          <div class="pipeline-step-card" id="step-4">
+            <span class="step-num">04 // INTELLIGENCE</span>
+            <h4 class="step-title">AI Hotspot Anchoring</h4>
+            <p class="text-muted" style="font-size:0.75rem; margin-top:4px;">Mapping interactive pins & AI guide context</p>
+          </div>
+          <div class="pipeline-step-card" id="step-5">
+            <span class="step-num">05 // DEPLOY</span>
+            <h4 class="step-title">Spatial E-Commerce</h4>
+            <p class="text-muted" style="font-size:0.75rem; margin-top:4px;">Ready for live AR & 3D customizer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Banner -->
+  <section class="section-wrapper">
+    <div class="container">
+      <div class="glass-panel" style="padding: 60px 40px; text-align: center; background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.12) 0%, var(--bg-glass-card) 70%);">
+        <h2 style="font-size: clamp(2rem, 3.5vw, 2.8rem); margin-bottom: 16px;">
+          Ready to Experience the <span class="text-gradient">Future of Shopping?</span>
+        </h2>
+        <p class="text-secondary" style="max-width: 600px; margin: 0 auto 32px auto; font-size: 1.1rem;">
+          Explore our complete catalog of 12+ interactive 3D products, customize your dream hardware, and bring it directly into your world.
+        </p>
+        <div class="hero-cta-row" style="justify-content: center;">
+          <a href="shop.html" class="btn btn-primary btn-lg">Browse Full 3D Catalog →</a>
+          <a href="cart.html" class="btn btn-outline btn-lg">View Shopping Cart</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-brand">
+            <div class="nav-logo-icon">⬡</div>
+            <span>VISIONVERSE <span class="text-cyan">3D</span></span>
+          </a>
+          <p>
+            An immersive spatial commerce platform where users discover, explore, understand, customize, and experience products in 3D before purchasing.
+          </p>
+          <div class="demo-mode-badge" style="margin-top: 16px;">
+            <span class="demo-pulse"></span>
+            <span>HACKATHON DEMO BUILD</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul class="footer-links">
+            <li><a href="shop.html">3D Catalog</a></li>
+            <li><a href="shop.html?category=Wearables">Wearables</a></li>
+            <li><a href="shop.html?category=Vehicles">Vehicles</a></li>
+            <li><a href="shop.html?category=Audio">Audio Hardware</a></li>
+            <li><a href="shop.html?category=Computing">Workstations</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Experience</h4>
+          <ul class="footer-links">
+            <li><a href="#showcase">3D Viewer Engine</a></li>
+            <li><a href="#exhibition">Virtual Exhibition</a></li>
+            <li><a href="#converter">Website → 3D Pipeline</a></li>
+            <li><a href="product.html?id=visionwatch-x1">Live Customizer</a></li>
+            <li><a href="product.html?id=visioncar-one">AR Simulation</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Shopping</h4>
+          <ul class="footer-links">
+            <li><a href="cart.html">View Cart</a></li>
+            <li><a href="checkout.html">Express Checkout</a></li>
+            <li><a href="#" class="wishlist-nav-trigger">My Wishlist</a></li>
+            <li><a href="#" onclick="window.dispatchEvent(new CustomEvent('visionverse-open-ai', { detail: { query: 'Give me a coupon code' } }))">Promo Coupons</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 VisionVerse 3D Commerce. "Shop Beyond the Screen." Built for Hackathon Demo.</p>
+        <p>HTML5 · CSS3 · Vanilla JS · Three.js · WebGL · LocalStorage</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/three-viewer.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ai-guide.js"></script>
+
+  <script>
+    // Initialize Homepage 3D elements & grids
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Interactive 3D Hero background
+      initHeroBackground('hero-3d-bg');
+
+      // 2. Render Featured Products
+      const featContainer = document.getElementById('featured-products-grid');
+      if (featContainer) {
+        const featured = getFeaturedProducts().slice(0, 4);
+        let html = "";
+        featured.forEach(p => {
+          html += `
+            <div class="product-card glass-panel">
+              <div class="card-badges">
+                ${p.badge ? `<span class="badge-featured">${p.badge}</span>` : ''}
+                <span class="badge-discount">${p.discount}</span>
+              </div>
+              <button class="wishlist-btn ${isProductInWishlist(p.id) ? 'active' : ''}" 
+                      onclick="handleCardWishlistClick(event, '${p.id}')">
+                ${isProductInWishlist(p.id) ? '♥' : '♡'}
+              </button>
+              <div class="product-image-wrap" onclick="window.location.href='product.html?id=${p.id}'">
+                <div class="product-svg-box">${generateProductSVG(p, 280, 220)}</div>
+                <div class="quick-3d-hover-tag"><span>⬡ Click for 3D View</span></div>
+              </div>
+              <div class="product-content">
+                <div class="product-meta">
+                  <span class="product-cat">${p.category}</span>
+                  <span class="rating-num">★ ${p.rating} (${p.reviews})</span>
+                </div>
+                <h3 class="product-title"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+                <p class="product-short-desc">${p.shortDesc}</p>
+                <div class="product-price-row">
+                  <div class="price-box">
+                    <span class="price-current">${formatPriceINR(p.price)}</span>
+                    <span class="price-old">${formatPriceINR(p.oldPrice)}</span>
+                  </div>
+                </div>
+                <div class="product-card-actions">
+                  <a href="product.html?id=${p.id}" class="btn btn-primary btn-sm flex-1">View in 3D →</a>
+                  <button class="btn btn-outline btn-sm btn-icon-only" onclick="handleQuickAddToCart(event, '${p.id}')" title="Add to Cart">🛒</button>
+                  <button class="btn btn-glass btn-sm btn-icon-only" onclick="handleQuick3DClick(event, '${p.id}')" title="3D Inspection">👁</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        featContainer.innerHTML = html;
+      }
+
+      // 3. Render Trending Products
+      const trendContainer = document.getElementById('trending-products-grid');
+      if (trendContainer) {
+        const trending = getTrendingProducts().slice(0, 4);
+        let html = "";
+        trending.forEach(p => {
+          html += `
+            <div class="product-card glass-panel">
+              <div class="card-badges">
+                <span class="badge-discount">${p.discount}</span>
+              </div>
+              <button class="wishlist-btn ${isProductInWishlist(p.id) ? 'active' : ''}" 
+                      onclick="handleCardWishlistClick(event, '${p.id}')">
+                ${isProductInWishlist(p.id) ? '♥' : '♡'}
+              </button>
+              <div class="product-image-wrap" onclick="window.location.href='product.html?id=${p.id}'">
+                <div class="product-svg-box">${generateProductSVG(p, 280, 220)}</div>
+                <div class="quick-3d-hover-tag"><span>⬡ Click for 3D View</span></div>
+              </div>
+              <div class="product-content">
+                <div class="product-meta">
+                  <span class="product-cat">${p.category}</span>
+                  <span class="rating-num">★ ${p.rating} (${p.reviews})</span>
+                </div>
+                <h3 class="product-title"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+                <p class="product-short-desc">${p.shortDesc}</p>
+                <div class="product-price-row">
+                  <div class="price-box">
+                    <span class="price-current">${formatPriceINR(p.price)}</span>
+                    <span class="price-old">${formatPriceINR(p.oldPrice)}</span>
+                  </div>
+                </div>
+                <div class="product-card-actions">
+                  <a href="product.html?id=${p.id}" class="btn btn-primary btn-sm flex-1">View in 3D →</a>
+                  <button class="btn btn-outline btn-sm btn-icon-only" onclick="handleQuickAddToCart(event, '${p.id}')" title="Add to Cart">🛒</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        trendContainer.innerHTML = html;
+      }
+
+      // 2. Render Budget Micro-Tech Grid (₹19 - ₹999)
+      const budgetContainer = document.getElementById('budget-products-grid');
+      if (budgetContainer) {
+        const budgetItems = PRODUCTS_DATABASE.filter(p => p.price <= 999).slice(0, 4);
+        let html = "";
+        budgetItems.forEach(p => {
+          html += `
+            <div class="product-card glass-panel">
+              <div class="card-badges">
+                <span class="badge-tag">${p.badge || 'Micro-Tech'}</span>
+                <span class="badge-discount">${p.discount}</span>
+              </div>
+              <button class="wishlist-btn ${isProductInWishlist(p.id) ? 'active' : ''}" 
+                      onclick="handleCardWishlistClick(event, '${p.id}')">
+                ${isProductInWishlist(p.id) ? '♥' : '♡'}
+              </button>
+              <div class="product-image-wrap" onclick="window.location.href='product.html?id=${p.id}'">
+                <div class="product-svg-box">${generateProductSVG(p, 280, 220)}</div>
+                <div class="quick-3d-hover-tag"><span>⬡ 3D View</span></div>
+              </div>
+              <div class="product-content">
+                <div class="product-meta">
+                  <span class="product-cat">${p.category}</span>
+                  <span class="rating-num">★ ${p.rating} (${p.reviews})</span>
+                </div>
+                <h3 class="product-title"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+                <p class="product-short-desc">${p.shortDesc}</p>
+                <div class="product-price-row">
+                  <div class="price-box">
+                    <span class="price-current">${formatPriceINR(p.price)}</span>
+                    <span class="price-old">${formatPriceINR(p.oldPrice)}</span>
+                  </div>
+                </div>
+                <div class="product-card-actions">
+                  <a href="product.html?id=${p.id}" class="btn btn-primary btn-sm flex-1">View in 3D →</a>
+                  <button class="btn btn-outline btn-sm btn-icon-only" onclick="handleQuickAddToCart(event, '${p.id}')" title="Add to Cart">🛒</button>
+                  <button class="btn btn-glass btn-sm btn-icon-only" onclick="handleQuick3DClick(event, '${p.id}')" title="3D Inspection">👁</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        budgetContainer.innerHTML = html;
+      }
+
+      // 4. Live 3D Product Showcase Viewer
+      const showcaseBox = document.getElementById('homepage-showcase-canvas');
+      const showcaseProducts = [
+        getProductById('visioncar-one'),
+        getProductById('vision-gamepad'),
+        getProductById('braided-rgb-cable'),
+        getProductById('cyber-beacon-keyring'),
+        getProductById('cyber-nfc-tag'),
+        getProductById('visionwatch-x1'),
+        getProductById('future-drone')
+      ].filter(Boolean);
+      let currentShowcaseIdx = 0;
+
+      let showcaseViewer = null;
+      if (showcaseBox) {
+        showcaseViewer = new VisionThreeViewer(showcaseBox, {
+          autoRotate: true,
+          autoRotateSpeed: 1.5,
+          cameraZ: 4.5,
+          enableHotspots: false
+        });
+        showcaseViewer.loadProductModel(showcaseProducts[0]);
+
+        const switchBtn = document.getElementById('showcase-switch-model-btn');
+        if (switchBtn) {
+          switchBtn.addEventListener('click', () => {
+            currentShowcaseIdx = (currentShowcaseIdx + 1) % showcaseProducts.length;
+            const p = showcaseProducts[currentShowcaseIdx];
+            showcaseViewer.loadProductModel(p);
+            
+            document.getElementById('showcase-title').textContent = p.name;
+            document.getElementById('showcase-subtitle').textContent = p.shortDesc;
+            document.getElementById('showcase-badge').textContent = `${p.category} 3D Showcase`;
+            document.getElementById('showcase-detail-btn').href = `product.html?id=${p.id}`;
+            showToast(`Loaded 3D Model: <strong>${p.name}</strong>`, 'info');
+          });
+        }
+      }
+
+      // 5. Virtual 3D Exhibition Gallery
+      const exhibitionCanvas = document.getElementById('exhibition-3d-canvas');
+      let exhibitionGallery = null;
+      if (exhibitionCanvas) {
+        exhibitionGallery = new VisionExhibitionGallery(exhibitionCanvas);
+
+        const navChips = document.querySelectorAll('.exhibit-nav-chip');
+        navChips.forEach((chip) => {
+          chip.addEventListener('click', () => {
+            navChips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            const idx = Number(chip.dataset.index);
+            exhibitionGallery.focusExhibit(idx);
+          });
+        });
+      }
+
+      // 6. Website -> 3D Converter Interactive Demo
+      const convForm = document.getElementById('converter-demo-form');
+      if (convForm) {
+        convForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const steps = [
+            document.getElementById('step-1'),
+            document.getElementById('step-2'),
+            document.getElementById('step-3'),
+            document.getElementById('step-4'),
+            document.getElementById('step-5')
+          ];
+          
+          steps.forEach(s => s.classList.remove('active'));
+          let currentStep = 0;
+          showToast("Starting Spatial Synthesis Engine...", "info");
+
+          const interval = setInterval(() => {
+            if (currentStep < steps.length) {
+              steps[currentStep].classList.add('active');
+              currentStep++;
+            } else {
+              clearInterval(interval);
+              showToast("🎉 3D World successfully generated! Opening 3D showcase...", "success");
+              const sec = document.getElementById('showcase');
+              if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 450);
+        });
+      }
+    });
+
+    function handleCardWishlistClick(e, productId) {
+      e.stopPropagation();
+      const btn = e.currentTarget;
+      const isAdded = toggleWishlist(productId);
+      if (isAdded) {
+        btn.classList.add('active');
+        btn.innerHTML = '♥';
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '♡';
+      }
+    }
+
+    function handleQuickAddToCart(e, productId) {
+      e.stopPropagation();
+      const p = getProductById(productId);
+      if (p) addToCart(p);
+    }
+
+    function handleQuick3DClick(e, productId) {
+      e.stopPropagation();
+      openQuick3DModal(productId);
+    }
+  </script>
+</body>
+</html>

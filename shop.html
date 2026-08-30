@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Catalog | VisionVerse Commerce</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/shop.css">
+  
+  <!-- Three.js CDN & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo-icon">⬡</div>
+        <span>VISIONVERSE <span class="text-cyan">3D</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html" class="active">Shop</a></li>
+        <li><a href="shop.html?category=Wearables">Categories</a></li>
+        <li><a href="index.html#showcase">3D World</a></li>
+        <li><a href="index.html#exhibition">Exhibition</a></li>
+        <li>
+          <a href="#" class="wishlist-nav-trigger">
+            <span class="nav-wishlist-text">Wishlist</span>
+            <span class="wishlist-count-badge count-bubble" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-right-actions">
+        <div class="demo-mode-badge">
+          <span class="demo-pulse"></span>
+          <span>DEMO MODE</span>
+        </div>
+
+        <a href="cart.html" class="nav-action-pill" id="nav-cart-btn">
+          <span>🛒</span>
+          <span class="nav-cart-text">Cart</span>
+          <span class="cart-count-badge count-bubble" style="display:none;">0</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Shop Main Content -->
+  <main class="container">
+    <!-- Header -->
+    <div class="shop-hero-header">
+      <span class="badge-tag">✦ Spatial Hardware Store</span>
+      <h1>Explore <span class="text-gradient">Interactive 3D</span> Catalog</h1>
+      <p>Filter by category, price, and specs. Inspect any device in real-time 3D or AR before purchasing.</p>
+    </div>
+
+    <!-- Category Pills Bar -->
+    <div class="category-filter-bar" id="category-filter-container">
+      <!-- Populated via shop.js -->
+    </div>
+
+    <!-- Shop Grid Layout -->
+    <div class="shop-main-layout">
+      <!-- Filter Sidebar -->
+      <aside class="filter-sidebar glass-panel">
+        <div class="filter-sidebar-header">
+          <h3>Filters</h3>
+          <span class="badge-tag" id="product-count-display">12 Products</span>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div class="filter-group">
+          <h4>Max Price (INR)</h4>
+          <div class="price-slider-wrap">
+            <input type="range" class="price-slider" id="price-range-slider" min="10" max="1000000" step="10" value="1000000">
+            <span class="price-display-val" id="price-range-display">Up to ₹10,00,000</span>
+          </div>
+        </div>
+
+        <!-- Rating Filter -->
+        <div class="filter-group">
+          <h4>Customer Rating</h4>
+          <div class="rating-options-list">
+            <label class="rating-radio-label">
+              <input type="radio" name="rating-filter" value="0" checked>
+              <span>All Ratings</span>
+            </label>
+            <label class="rating-radio-label">
+              <input type="radio" name="rating-filter" value="4.8">
+              <span>★ 4.8 & above</span>
+            </label>
+            <label class="rating-radio-label">
+              <input type="radio" name="rating-filter" value="4.5">
+              <span>★ 4.5 & above</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Quick Budget Links -->
+        <div class="filter-group">
+          <h4>Budget Hotspots</h4>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:0.85rem; color:var(--text-secondary);">
+            <a href="shop.html?category=Accessories" class="text-cyan">⚡ Micro-Gadgets (From ₹19)</a>
+            <a href="shop.html?category=Gaming" class="text-cyan">🎮 Gaming Hardware (From ₹1,999)</a>
+            <a href="shop.html?category=Wearables" class="text-cyan">✦ Wearable Tech (From ₹999)</a>
+            <a href="shop.html?category=Vehicles" class="text-cyan">🏎 Autonomous Vehicles</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Products Area -->
+      <section class="shop-products-section">
+        <!-- Top Toolbar: Search & Sort -->
+        <div class="shop-toolbar">
+          <div class="shop-search-box">
+            <input type="text" class="shop-search-input" id="shop-search-input" placeholder="Search by name, category, specs..." autocomplete="off">
+            <button class="shop-search-clear" id="shop-search-clear" aria-label="Clear search">&times;</button>
+          </div>
+
+          <div class="toolbar-controls-right">
+            <select class="sort-select" id="shop-sort-select">
+              <option value="popular">Sort: Most Popular</option>
+              <option value="price-low">Price: Low → High</option>
+              <option value="price-high">Price: High → Low</option>
+              <option value="rating">Highest Rated</option>
+              <option value="newest">New Arrivals</option>
+            </select>
+
+            <div class="view-mode-toggle">
+              <button class="view-btn active" id="view-grid-btn" title="Grid View">⊞</button>
+              <button class="view-btn" id="view-list-btn" title="List View">☰</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Grid Container -->
+        <div class="products-grid" id="products-grid-container">
+          <!-- Populated dynamically via shop.js -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-brand">
+            <div class="nav-logo-icon">⬡</div>
+            <span>VISIONVERSE <span class="text-cyan">3D</span></span>
+          </a>
+          <p>An immersive spatial commerce platform where users discover, explore, understand, customize, and experience products in 3D before purchasing.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop Catalog</a></li>
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="checkout.html">Checkout</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Support & AI</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="window.dispatchEvent(new CustomEvent('visionverse-open-ai', { detail: { query: 'Show products under ₹5000' } }))">Budget Under ₹5000</a></li>
+            <li><a href="#" onclick="window.dispatchEvent(new CustomEvent('visionverse-open-ai', { detail: { query: 'Compare VisionWatch X1 and VisionWatch Pro' } }))">Compare Watches</a></li>
+            <li><a href="#" onclick="window.dispatchEvent(new CustomEvent('visionverse-open-ai', { detail: { query: 'How does 3D customization work?' } }))">Customization Guide</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Demo Mode</h4>
+          <p class="text-muted" style="font-size:0.85rem;">All checkout, cart, and customization systems operate offline with localStorage persistence for Hackathon testing.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 VisionVerse 3D Commerce. "Shop Beyond the Screen."</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/three-viewer.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/shop.js"></script>
+  <script src="js/ai-guide.js"></script>
+</body>
+</html>

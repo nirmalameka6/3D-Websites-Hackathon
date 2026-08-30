@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart | VisionVerse 3D Commerce</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cart.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        <div class="nav-logo-icon">⬡</div>
+        <span>VISIONVERSE <span class="text-cyan">3D</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="shop.html?category=Wearables">Categories</a></li>
+        <li><a href="index.html#showcase">3D World</a></li>
+        <li><a href="index.html#exhibition">Exhibition</a></li>
+        <li>
+          <a href="#" class="wishlist-nav-trigger">
+            <span class="nav-wishlist-text">Wishlist</span>
+            <span class="wishlist-count-badge count-bubble" style="display:none;">0</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-right-actions">
+        <div class="demo-mode-badge">
+          <span class="demo-pulse"></span>
+          <span>DEMO MODE</span>
+        </div>
+
+        <a href="cart.html" class="nav-action-pill" id="nav-cart-btn">
+          <span>🛒</span>
+          <span class="nav-cart-text">Cart</span>
+          <span class="cart-count-badge count-bubble" style="display:none;">0</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle navigation menu">&#9776;</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cart Main Content -->
+  <main class="container">
+    <div class="cart-hero-header">
+      <span class="badge-tag">✦ Review Your Hardware</span>
+      <h1>Your <span class="text-gradient">Spatial Cart</span></h1>
+    </div>
+
+    <!-- Empty State Container -->
+    <div id="cart-empty-state" class="cart-empty-box glass-panel" style="display:none;">
+      <div class="empty-icon-lg">🛒</div>
+      <h2>Your Cart is Empty</h2>
+      <p>Discover next-generation hardware in our 3D showroom and customize your dream setup.</p>
+      <a href="shop.html" class="btn btn-primary btn-lg">Explore 3D Catalog →</a>
+    </div>
+
+    <!-- Main Cart Layout Grid -->
+    <div class="cart-main-grid" id="cart-content-wrapper">
+      <!-- Left: Cart Items Table Card -->
+      <div class="cart-items-card glass-panel">
+        <table class="cart-table">
+          <thead>
+            <tr>
+              <th>Product & Customization</th>
+              <th>Unit Price</th>
+              <th>Quantity</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cart-items-tbody">
+            <!-- Populated dynamically via cart.js -->
+          </tbody>
+        </table>
+
+        <div class="cart-table-footer">
+          <a href="shop.html" class="btn btn-outline btn-sm">← Continue Shopping</a>
+          <button class="btn btn-glass btn-sm text-danger" id="btn-clear-cart">Clear Entire Cart</button>
+        </div>
+      </div>
+
+      <!-- Right: Summary Sidebar -->
+      <aside class="cart-summary-card glass-panel">
+        <h3>Order Summary</h3>
+
+        <!-- Free shipping bar -->
+        <div class="free-shipping-progress-box" id="free-shipping-progress">
+          Add more for FREE Shipping!
+        </div>
+
+        <!-- Coupon code box -->
+        <div class="coupon-box">
+          <form class="coupon-form" id="coupon-form">
+            <input type="text" class="coupon-input" id="coupon-input" placeholder="Promo code (e.g. VISION20)" autocomplete="off">
+            <button type="submit" class="btn btn-outline btn-sm">Apply</button>
+          </form>
+          <div id="coupon-message" class="coupon-msg"></div>
+        </div>
+
+        <!-- Pricing Totals -->
+        <div class="summary-rows-list">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="summary-subtotal">₹0</span>
+          </div>
+          <div class="summary-row" id="summary-discount-row" style="display:none; color: var(--accent-emerald);">
+            <span>Coupon Discount:</span>
+            <span id="summary-discount">-₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Express Delivery:</span>
+            <span id="summary-shipping">FREE</span>
+          </div>
+          <div class="summary-row">
+            <span>Estimated GST:</span>
+            <span id="summary-tax">Included</span>
+          </div>
+          <div class="summary-total-row">
+            <span>Total:</span>
+            <span id="summary-total">₹0</span>
+          </div>
+        </div>
+
+        <a href="checkout.html" class="btn btn-primary btn-lg" style="width: 100%;">
+          <span>Proceed to Checkout</span>
+          <span class="btn-icon">⚡</span>
+        </a>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 VisionVerse 3D Commerce. "Shop Beyond the Screen."</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/ai-guide.js"></script>
+</body>
+</html>
