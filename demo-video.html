@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VisionVerse 3D - Automated Hackathon Video Presentation & Recorder</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #060814;
+      --panel-bg: rgba(13, 18, 36, 0.85);
+      --accent-cyan: #00f0ff;
+      --accent-purple: #8a2be2;
+      --accent-pink: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Video Frame Studio (16:9 Cinema Aspect) */
+    .video-viewport-wrapper {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 40%, #0d1530 0%, #04060e 80%);
+    }
+
+    #video-canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* Video Overlay Elements */
+    .video-overlay-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 36px 48px;
+    }
+
+    /* Header Bar */
+    .video-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(7, 10, 22, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 8px 20px;
+      border-radius: 999px;
+      box-shadow: 0 0 24px rgba(0, 240, 255, 0.2);
+    }
+
+    .brand-logo-icon {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
+    .scene-progress-badge {
+      background: rgba(138, 43, 226, 0.2);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #c084fc;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    /* Center Scene Title Card */
+    .scene-info-box {
+      max-width: 650px;
+      background: rgba(7, 10, 22, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 24px 32px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scene-info-box.active {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .scene-tag {
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .scene-heading {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .scene-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .feature-chips-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .feat-chip {
+      padding: 4px 10px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+    }
+
+    /* Subtitles / Teleprompter Box at Bottom */
+    .subtitles-banner {
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+      background: rgba(4, 6, 14, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      border-radius: 16px;
+      padding: 16px 24px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+    }
+
+    .subtitles-text {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1.4;
+    }
+
+    .subtitles-speaker {
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    /* Bottom Control Bar */
+    .video-control-bar {
+      height: 72px;
+      background: #04060d;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 36px;
+      z-index: 100;
+    }
+
+    .playback-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-record {
+      background: linear-gradient(135deg, #f43f5e, #e11d48);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+    }
+
+    .btn-record.recording {
+      background: #10b981;
+      animation: pulseRecord 1.5s infinite;
+    }
+
+    @keyframes pulseRecord {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.03); }
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+    }
+
+    .btn:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+
+    .timeline-scrubber-box {
+      flex: 1;
+      margin: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .timeline-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .timeline-progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      transition: width 0.3s linear;
+    }
+
+    .time-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      min-width: 90px;
+    }
+
+    .audio-toggle-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .audio-toggle-btn.active {
+      color: var(--accent-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Video Viewport Area -->
+  <div class="video-viewport-wrapper" id="video-wrapper">
+    <!-- Three.js Canvas Container -->
+    <div id="video-canvas-container"></div>
+
+    <!-- UI Overlay Layer -->
+    <div class="video-overlay-layer">
+      <!-- Header -->
+      <div class="video-header">
+        <div class="brand-pill">
+          <div class="brand-logo-icon">⬡</div>
+          <span class="brand-title">VISIONVERSE <span style="color:var(--accent-cyan)">3D</span></span>
+        </div>
+
+        <div class="scene-progress-badge" id="scene-counter">SCENE 01 / 10</div>
+      </div>
+
+      <!-- Left Scene Info Card -->
+      <div class="scene-info-box active" id="scene-card">
+        <span class="scene-tag" id="scene-tag">01 // INTRODUCTION</span>
+        <h2 class="scene-heading" id="scene-title">Shop Beyond the Screen</h2>
+        <p class="scene-desc" id="scene-desc">
+          Next-generation spatial e-commerce engine combining real-time Three.js WebGL rendering, live PBR customizer, hardware telemetry hotspots, and WebXR.
+        </p>
+        <div class="feature-chips-row" id="scene-chips">
+          <span class="feat-chip">WebGL 3D</span>
+          <span class="feat-chip">Three.js</span>
+          <span class="feat-chip">Zero Backend</span>
+          <span class="feat-chip">LocalStorage</span>
+        </div>
+      </div>
+
+      <!-- Subtitles / Voiceover Teleprompter -->
+      <div class="subtitles-banner">
+        <span class="subtitles-speaker">🎙️ NARRATION & SUBTITLES</span>
+        <div class="subtitles-text" id="subtitles-text">
+          "Welcome to VisionVerse 3D Commerce — where we redefine online shopping with the slogan: Shop Beyond the Screen."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Playback & Recording Bar -->
+  <div class="video-control-bar">
+    <div class="playback-controls">
+      <button class="btn btn-record" id="btn-record-video">
+        <span id="record-dot">🔴</span>
+        <span id="record-btn-text">Record & Download Video</span>
+      </button>
+
+      <button class="btn btn-primary" id="btn-play-pause">▶ Play Video Demo</button>
+      <button class="btn btn-outline" id="btn-restart-demo">↻ Restart</button>
+      <button class="btn btn-outline" id="btn-voice-toggle" title="Toggle AI Voiceover Narration">🔊 Voice Narration: ON</button>
+    </div>
+
+    <div class="timeline-scrubber-box">
+      <div class="timeline-bar">
+        <div class="timeline-progress" id="timeline-fill"></div>
+      </div>
+      <span class="time-display" id="time-indicator">00:00 / 02:30</span>
+    </div>
+
+    <div>
+      <a href="index.html" class="btn btn-outline">Back to Website ↗</a>
+    </div>
+  </div>
+
+  <!-- Unified Product Database & Three Viewer -->
+  <script src="js/products.js"></script>
+  <script src="js/three-viewer.js"></script>
+
+  <script>
+    /* =========================================================================
+       Automated Video Presentation & Scene Orchestrator
+       ========================================================================= */
+
+    const SCENES = [
+      {
+        id: 1,
+        tag: "01 // INTRODUCTION",
+        title: "Shop Beyond the Screen",
+        desc: "Transforming flat, static 2D e-commerce into an interactive, spatial 3D shopping universe.",
+        chips: ["Three.js Engine", "WebGL Shaders", "Zero Latency", "PBR Lighting"],
+        modelType: "cyber_car",
+        modelColor: "#7928ca",
+        matType: "standard",
+        camZ: 4.5,
+        explode: false,
+        duration: 12,
+        narration: "Welcome to VisionVerse 3D Commerce — an immersive spatial shopping platform designed to redefine e-commerce with our slogan: Shop Beyond the Screen."
+      },
+      {
+        id: 2,
+        tag: "02 // THE PROBLEM",
+        title: "Why Flat 2D E-Commerce Fails",
+        desc: "Static product photos cause 30%+ return rates due to lack of spatial scale, hidden internal build layers, and poor material feel.",
+        chips: ["30% Return Rates", "Zero Scale Feel", "Static Photos", "Blind Buying"],
+        modelType: "smartwatch",
+        modelColor: "#00f0ff",
+        matType: "standard",
+        camZ: 4.2,
+        explode: false,
+        duration: 14,
+        narration: "For decades, online shoppers had to guess what products look like from flat 2D images. VisionVerse brings physical-grade confidence directly to the browser."
+      },
+      {
+        id: 3,
+        tag: "03 // EXPANDED CATALOG",
+        title: "Micro-Tech to Hyper-EVs (₹19 to ₹8.99L)",
+        desc: "Over 20 procedural 3D products spanning budget smart NFC tags (₹19), glowing warp cables (₹199), gamepads, and autonomous cyber-cars.",
+        chips: ["From ₹19 to ₹8.99L", "20+ Procedural Meshes", "Live Search", "Price Slider"],
+        modelType: "smart_tag",
+        modelColor: "#00f0ff",
+        matType: "metal",
+        camZ: 3.5,
+        explode: false,
+        duration: 16,
+        narration: "Our catalog features over 20 procedural 3D hardware products spanning every budget — starting from 19-rupee holographic smart tags all the way up to luxury hyper-EVs."
+      },
+      {
+        id: 4,
+        tag: "04 // HARDWARE HOTSPOTS",
+        title: "Interactive Component Telemetry",
+        desc: "Pulsating 3D pins project screen vectors in real-time, revealing biometric optical sensors, laser headlights, and internal circuitry on click.",
+        chips: ["3D-to-2D Vector Projection", "Bio-Sensors", "Telemetry Data", "Raycasting"],
+        modelType: "smartwatch_pro",
+        modelColor: "#ff6b00",
+        matType: "metal",
+        camZ: 4.2,
+        explode: false,
+        duration: 15,
+        narration: "Interactive hardware hotspots follow the product in 3D, allowing customers to inspect internal sensors, satellite antennas, and technical engineering specs with a single click."
+      },
+      {
+        id: 5,
+        tag: "05 // 3D EXPLODE VIEW",
+        title: "💥 Deconstruct & Inspect Engineering",
+        desc: "Smoothly disassembles external casing and armor outward along normal vectors to inspect internal components.",
+        chips: ["Normal Vector Disassembly", "Engineering Layers", "Sensor Matrix", "Sub-Assembly"],
+        modelType: "gamepad",
+        modelColor: "#7c3aed",
+        matType: "carbon",
+        camZ: 4.0,
+        explode: true,
+        duration: 15,
+        narration: "With our 3D Explode view, shoppers can deconstruct the device into its sub-assemblies to verify build quality, haptic motors, and circuit layers before purchasing."
+      },
+      {
+        id: 6,
+        tag: "06 // LIVE CUSTOMIZER",
+        title: "🎨 Live Materials & Dynamic Pricing",
+        desc: "Switch between Titanium Matrix, Sapphire Crystal, and Forged Carbon in real-time with automatic dynamic price calculation.",
+        chips: ["PBR Material Switching", "Dynamic Pricing Engine", "Real-Time Shaders", "Cart Encapsulation"],
+        modelType: "headphones",
+        modelColor: "#f43f5e",
+        matType: "glass",
+        camZ: 4.2,
+        explode: false,
+        duration: 16,
+        narration: "Our Live 3D Customizer lets users switch between aerospace titanium, sapphire crystal, and forged carbon, while our dynamic pricing engine recalculates costs live."
+      },
+      {
+        id: 7,
+        tag: "07 // MULTI-STUDIO LIGHTING",
+        title: "💡 Multi-Environment Lighting Studio",
+        desc: "Toggle between Cyber Neon (Cyan/Magenta), Clean Studio (5500K White), Sunset Amber, and Matrix Glow to test finishes under real lighting.",
+        chips: ["Cyber Neon", "Clean Studio 5500K", "Sunset Amber", "Matrix Glow"],
+        modelType: "future_drone",
+        modelColor: "#ea580c",
+        matType: "carbon",
+        camZ: 4.2,
+        explode: false,
+        duration: 14,
+        narration: "Shoppers can also switch studio lighting environments — from cyber neon to clean daylight — testing specular reflections and realistic shadows."
+      },
+      {
+        id: 8,
+        tag: "08 // AR & 3D EXHIBITION",
+        title: "🥽 WebXR Augmented Reality & Showroom",
+        desc: "Project true-to-scale 3D models onto your desk with WebXR and mobile QR codes, or stroll through our 3D virtual exhibition gallery.",
+        chips: ["WebXR Immersive AR", "QR Code Simulator", "Cinematic Showroom", "Pedestal Gliding"],
+        modelType: "smart_glasses",
+        modelColor: "#00f0ff",
+        matType: "standard",
+        camZ: 3.8,
+        explode: false,
+        duration: 16,
+        narration: "With WebXR Augmented Reality, users can project products onto their physical desk, or glide through our 3D Virtual Exhibition gallery."
+      },
+      {
+        id: 9,
+        tag: "09 // VISION AI GUIDE",
+        title: "🤖 Vision AI Spatial Assistant",
+        desc: "Rule-based natural language assistant that answers budget questions, compares hardware, and directly controls the 3D viewport.",
+        chips: ["Rule-Based NLP", "Budget Matching", "Direct 3D Actions", "Promo Engine"],
+        modelType: "desk_prism",
+        modelColor: "#8a2be2",
+        matType: "glass",
+        camZ: 3.8,
+        explode: false,
+        duration: 15,
+        narration: "Meet Vision AI — our spatial shopping guide that compares specifications, finds products under any budget, and executes direct 3D website actions on command."
+      },
+      {
+        id: 10,
+        tag: "10 // FULL CHECKOUT & CONCLUSION",
+        title: "🛒 Persistent E-Commerce Pipeline",
+        desc: "Persistent LocalStorage cart, promo discounts (VISION20 / HACKATHON), demo UPI/Card checkout, and instant confirmation receipt.",
+        chips: ["LocalStorage Sync", "Promo Code Engine", "Instant UPI QR", "Animated Confirmation"],
+        modelType: "cyber_car",
+        modelColor: "#00f0ff",
+        matType: "metal",
+        camZ: 4.5,
+        explode: false,
+        duration: 15,
+        narration: "With a persistent cart, promo codes, and interactive checkout, VisionVerse brings spatial commerce to life today. Thank you!"
+      }
+    ];
+
+    // Master Controller
+    class VideoPresentationEngine {
+      constructor() {
+        this.currentSceneIdx = 0;
+        this.isPlaying = false;
+        this.isVoiceEnabled = true;
+        this.elapsedSeconds = 0;
+        this.totalDuration = SCENES.reduce((sum, s) => sum + s.duration, 0);
+        this.sceneTimer = null;
+        this.viewer = null;
+        
+        // Media Recorder for video download
+        this.mediaRecorder = null;
+        this.recordedChunks = [];
+        this.isRecording = false;
+
+        this.init();
+      }
+
+      init() {
+        const canvasBox = document.getElementById('video-canvas-container');
+        this.viewer = new VisionThreeViewer(canvasBox, {
+          autoRotate: true,
+          autoRotateSpeed: 1.8,
+          cameraZ: 4.5,
+          enableHotspots: false,
+          enableParticles: true
+        });
+
+        this.attachUIEvents();
+        this.loadScene(0);
+      }
+
+      attachUIEvents() {
+        document.getElementById('btn-play-pause').addEventListener('click', () => this.togglePlayPause());
+        document.getElementById('btn-restart-demo').addEventListener('click', () => this.restartDemo());
+        document.getElementById('btn-voice-toggle').addEventListener('click', () => this.toggleVoice());
+        document.getElementById('btn-record-video').addEventListener('click', () => this.toggleRecording());
+      }
+
+      loadScene(index) {
+        if (index < 0 || index >= SCENES.length) return;
+        this.currentSceneIdx = index;
+        const scene = SCENES[index];
+
+        // 1. Update UI Text
+        document.getElementById('scene-counter').textContent = `SCENE ${String(index + 1).padStart(2, '0')} / ${String(SCENES.length).padStart(2, '0')}`;
+        document.getElementById('scene-tag').textContent = scene.tag;
+        document.getElementById('scene-title').textContent = scene.title;
+        document.getElementById('scene-desc').textContent = scene.desc;
+        document.getElementById('subtitles-text').textContent = `"${scene.narration}"`;
+
+        // Chips
+        const chipsContainer = document.getElementById('scene-chips');
+        chipsContainer.innerHTML = scene.chips.map(c => `<span class="feat-chip">${c}</span>`).join('');
+
+        // Card animation
+        const card = document.getElementById('scene-card');
+        card.classList.remove('active');
+        setTimeout(() => card.classList.add('active'), 50);
+
+        // 2. Load 3D Model in Viewport
+        const mockProduct = {
+          id: "scene-product",
+          name: scene.title,
+          modelType: scene.modelType,
+          colors: [{ name: "Custom", hex: scene.modelColor }]
+        };
+        this.viewer.loadProductModel(mockProduct);
+        this.viewer.updateCustomization(scene.modelColor, scene.matType, 1.0);
+        
+        if (scene.explode) {
+          setTimeout(() => this.viewer.toggleExplodeView(), 600);
+        }
+
+        // 3. Voice Narration
+        if (this.isVoiceEnabled && this.isPlaying) {
+          this.speakNarration(scene.narration);
+        }
+      }
+
+      speakNarration(text) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.05;
+
+        // Pick friendly English voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('David') || v.name.includes('Zira') || v.name.includes('Samantha')));
+        if (enVoice) utterance.voice = enVoice;
+
+        window.speechSynthesis.speak(utterance);
+      }
+
+      togglePlayPause() {
+        this.isPlaying = !this.isPlaying;
+        const btn = document.getElementById('btn-play-pause');
+
+        if (this.isPlaying) {
+          btn.textContent = "⏸ Pause Video Demo";
+          this.startPlaybackLoop();
+          this.speakNarration(SCENES[this.currentSceneIdx].narration);
+        } else {
+          btn.textContent = "▶ Resume Video Demo";
+          clearInterval(this.sceneTimer);
+          if (window.speechSynthesis) window.speechSynthesis.cancel();
+        }
+      }
+
+      startPlaybackLoop() {
+        clearInterval(this.sceneTimer);
+        let sceneRemaining = SCENES[this.currentSceneIdx].duration;
+
+        this.sceneTimer = setInterval(() => {
+          this.elapsedSeconds++;
+          sceneRemaining--;
+
+          this.updateTimelineUI();
+
+          if (sceneRemaining <= 0) {
+            if (this.currentSceneIdx < SCENES.length - 1) {
+              this.loadScene(this.currentSceneIdx + 1);
+              sceneRemaining = SCENES[this.currentSceneIdx].duration;
+            } else {
+              this.isPlaying = false;
+              document.getElementById('btn-play-pause').textContent = "▶ Replay Video Demo";
+              clearInterval(this.sceneTimer);
+              if (this.isRecording) this.stopRecording();
+            }
+          }
+        }, 1000);
+      }
+
+      updateTimelineUI() {
+        const progress = (this.elapsedSeconds / this.totalDuration) * 100;
+        document.getElementById('timeline-fill').style.width = `${Math.min(100, progress)}%`;
+
+        const curMin = String(Math.floor(this.elapsedSeconds / 60)).padStart(2, '0');
+        const curSec = String(this.elapsedSeconds % 60).padStart(2, '0');
+        const totMin = String(Math.floor(this.totalDuration / 60)).padStart(2, '0');
+        const totSec = String(this.totalDuration % 60).padStart(2, '0');
+
+        document.getElementById('time-indicator').textContent = `${curMin}:${curSec} / ${totMin}:${totSec}`;
+      }
+
+      restartDemo() {
+        this.elapsedSeconds = 0;
+        clearInterval(this.sceneTimer);
+        this.loadScene(0);
+        this.updateTimelineUI();
+        if (this.isPlaying) {
+          this.startPlaybackLoop();
+        }
+      }
+
+      toggleVoice() {
+        this.isVoiceEnabled = !this.isVoiceEnabled;
+        const btn = document.getElementById('btn-voice-toggle');
+        btn.textContent = `🔊 Voice Narration: ${this.isVoiceEnabled ? 'ON' : 'OFF'}`;
+        if (!this.isVoiceEnabled && window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+      }
+
+      /* =========================================================================
+         HTML5 MediaRecorder Video Downloader (WebM / MP4)
+         ========================================================================= */
+      toggleRecording() {
+        if (!this.isRecording) {
+          this.startRecording();
+        } else {
+          this.stopRecording();
+        }
+      }
+
+      startRecording() {
+        const canvas = this.viewer.renderer.domElement;
+        const stream = canvas.captureStream(60); // 60 FPS video capture
+
+        this.recordedChunks = [];
+        try {
+          this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+        } catch (e) {
+          this.mediaRecorder = new MediaRecorder(stream);
+        }
+
+        this.mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) this.recordedChunks.push(e.data);
+        };
+
+        this.mediaRecorder.onstop = () => {
+          this.downloadRecordedVideo();
+        };
+
+        this.mediaRecorder.start();
+        this.isRecording = true;
+
+        const recBtn = document.getElementById('btn-record-video');
+        recBtn.classList.add('recording');
+        document.getElementById('record-btn-text').textContent = "⏹ Stop & Download Video";
+
+        // Restart video demo from scene 1
+        this.restartDemo();
+        if (!this.isPlaying) this.togglePlayPause();
+      }
+
+      stopRecording() {
+        if (this.mediaRecorder && this.isRecording) {
+          this.mediaRecorder.stop();
+          this.isRecording = false;
+
+          const recBtn = document.getElementById('btn-record-video');
+          recBtn.classList.remove('recording');
+          document.getElementById('record-btn-text').textContent = "🔴 Record & Download Video";
+        }
+      }
+
+      downloadRecordedVideo() {
+        const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `VisionVerse_3D_Commerce_Hackathon_Demo_${Date.now()}.webm`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 100);
+      }
+    }
+
+    // Initialize Video Engine on load
+    document.addEventListener('DOMContentLoaded', () => {
+      window.videoPresentationEngine = new VideoPresentationEngine();
+    });
+  </script>
+</body>
+</html>
